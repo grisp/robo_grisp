@@ -1,38 +1,35 @@
 -module(robo_grisp).
 
--behavior(application).
+-behaviour(gen_server).
 
-% Callbacks
--export([start/2]).
--export([stop/1]).
+-export([start_link/0]).
+-export([init/1, handle_call/3, handle_cast/2, handle_info/2]).
 
-%--- Callbacks -----------------------------------------------------------------
+-include_lib("rosie_dds/include/dds_types.hrl").
 
-start(_Type, _Args) ->
-    grisp_gpio:open(spi1_1),
-    {ok, Supervisor} = robo_grisp_sup:start_link(),
-    LEDs = [1, 2],
-    [grisp_led:flash(L, red, 500) || L <- LEDs],
-    timer:sleep(5000),
-    grisp_led:off(2),
-    Random = fun() ->
-        {rand:uniform(2) - 1, rand:uniform(2) -1, rand:uniform(2) - 1}
-    end,
-    grisp_led:pattern(1, [{100, Random}]),
+-include_lib("geometry_msgs/src/_rosie/geometry_msgs_twist_msg.hrl").
+-include_lib("geometry_msgs/src/_rosie/geometry_msgs_pose_stamped_msg.hrl").
 
+-include_lib("tf2_msgs/src/_rosie/tf2_msgs_t_f_message_msg.hrl").
+-include_lib("visualization_msgs/src/_rosie/visualization_msgs_marker_msg.hrl").
 
-    M_front_right = pmod_hb5:open(gpio1, first),
-    M_front_left = pmod_hb5:open(gpio1, second),
-    M_back_right = pmod_hb5:open(uart, second),
-    M_back_left = pmod_hb5:open(i2c),
+-record(state, {
+    ros_node
+}).
 
-    pmod_hb5:forward(M_front_right),
-    pmod_hb5:forward(M_front_left),
+start_link() ->
+    gen_server:start_link({global, ?MODULE}, ?MODULE, #state{}, []).
 
-    pmod_hb5:forward(M_back_right),
-    pmod_hb5:forward(M_back_left),
+init(_) ->
+    Node = ros_context:create_node(atom_to_list(?MODULE)),
 
+    {ok, #state{ ros_node = Node}}.
 
-    {ok, Supervisor}.
+handle_call( _, _, S) ->
+    {reply, ok, S}.
 
-stop(_State) -> ok.
+handle_cast( _, S) ->
+    {noreply, S}.
+
+handle_info( _, S) ->
+    {noreply, S}.

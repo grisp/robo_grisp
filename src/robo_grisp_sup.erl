@@ -15,5 +15,15 @@
 start_link() -> supervisor:start_link({local, ?MODULE}, ?MODULE, []).
 
 %--- Callbacks -----------------------------------------------------------------
-
-init([]) -> {ok, { {one_for_all, 0, 1}, []} }.
+init([]) ->
+    SupFlags = #{
+        strategy => one_for_all,
+        intensity => 0,
+        period => 1
+    },
+    ROBOT = #{
+        id => robo_grisp,
+        start => {robo_grisp, start_link, []}
+    },
+    ChildSpecs = [ROBOT],
+    {ok, {SupFlags, ChildSpecs}}.
