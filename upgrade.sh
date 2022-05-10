@@ -1,0 +1,1 @@
+./grisp_install_upgrade.escript "upgrade" "{'robo_grisp', \"-sname\", 'robo_grisp@grisp-board', 'robo_grisp'}" "0.2.0"

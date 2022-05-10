@@ -39,31 +39,31 @@ init(_) ->
 handle_call( _, _, S) ->
     {reply, ok, S}.
 % BUG
-handle_cast( forward, S) ->
-    pmod_hb5:forward(S#state.motor_front_right),
-    pmod_hb5:forward(S#state.motor_front_left),
-    pmod_hb5:forward(S#state.motor_rear_right),
-    pmod_hb5:forward(S#state.motor_rear_left),
-    {noreply, S};
-handle_cast( backward, S) ->
-    pmod_hb5:backward(S#state.motor_front_right),
-    pmod_hb5:backward(S#state.motor_front_left),
-    pmod_hb5:backward(S#state.motor_rear_right),
-    pmod_hb5:backward(S#state.motor_rear_left),
-    {noreply, S};
-% FIX
 % handle_cast( forward, S) ->
-%     pmod_hb5:backward(S#state.motor_front_right),
+%     pmod_hb5:forward(S#state.motor_front_right),
 %     pmod_hb5:forward(S#state.motor_front_left),
-%     pmod_hb5:backward(S#state.motor_rear_right),
+%     pmod_hb5:forward(S#state.motor_rear_right),
 %     pmod_hb5:forward(S#state.motor_rear_left),
 %     {noreply, S};
 % handle_cast( backward, S) ->
-%     pmod_hb5:forward(S#state.motor_front_right),
+%     pmod_hb5:backward(S#state.motor_front_right),
 %     pmod_hb5:backward(S#state.motor_front_left),
-%     pmod_hb5:forward(S#state.motor_rear_right),
+%     pmod_hb5:backward(S#state.motor_rear_right),
 %     pmod_hb5:backward(S#state.motor_rear_left),
 %     {noreply, S};
+% FIX
+handle_cast( forward, S) ->
+    pmod_hb5:backward(S#state.motor_front_right),
+    pmod_hb5:forward(S#state.motor_front_left),
+    pmod_hb5:backward(S#state.motor_rear_right),
+    pmod_hb5:forward(S#state.motor_rear_left),
+    {noreply, S};
+handle_cast( backward, S) ->
+    pmod_hb5:forward(S#state.motor_front_right),
+    pmod_hb5:backward(S#state.motor_front_left),
+    pmod_hb5:forward(S#state.motor_rear_right),
+    pmod_hb5:backward(S#state.motor_rear_left),
+    {noreply, S};
 handle_cast( stop, S) ->
     pmod_hb5:stop(S#state.motor_front_right),
     pmod_hb5:stop(S#state.motor_front_left),
