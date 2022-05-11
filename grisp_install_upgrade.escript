@@ -152,7 +152,7 @@ unpack_release(RelName, TargetNode, Version) ->
             %%      releases/<version>/<relname>.tar.gz
             % io:format("Rel name: ~p\n",[RelName]),
             case copy_release_tar(TargetNode, Version, RelName) of
-                {error, Reason} ->
+                {error, _Reason} ->
                     {error, release_package_not_found};
                 {ok, ReleasePackage} ->
                     ?INFO("Release ~s not found, attempting to unpack ~s~n",
@@ -254,14 +254,14 @@ copy_release_tar(TargetNode, Version, RelName) ->
 %             {Filename, ReleaseHandlerPackageLink}
 %     end.
 
-first_value(_Fun, []) -> no_value;
-first_value(Fun, [Value | Rest]) ->
-    case Fun(Value) of
-        false ->
-            first_value(Fun, Rest);
-        true ->
-            {ok, Value}
-    end.
+% first_value(_Fun, []) -> no_value;
+% first_value(Fun, [Value | Rest]) ->
+%     case Fun(Value) of
+%         false ->
+%             first_value(Fun, Rest);
+%         true ->
+%             {ok, Value}
+%     end.
 
 parse_version(V) when is_list(V) ->
     hd(string:tokens(V,"/")).
