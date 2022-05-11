@@ -1,6 +1,6 @@
 
 [erlang]
-args = erl.rtems -C multi_time_warp -- -mode embedded -home . -pa . -root {{release_name}} -boot {{release_name}}/releases/0.1.0/start -config {{release_name}}/releases/0.1.0/sys.config -internal_epmd epmd_sup -kernel inetrc "./erl_inetrc" -sname {{release_name}} -setcookie robo_grisp
+args = erl.rtems -C multi_time_warp -- -mode embedded -home . -pa . -root {{release_name}} -boot {{release_name}}/releases/0.2.0/start -config {{release_name}}/releases/0.2.0/sys.config -internal_epmd epmd_sup -kernel inetrc "./erl_inetrc" -sname {{release_name}} -setcookie robo_grisp
 
 [network]
 ip_self=dhcp
