@@ -1,6 +1,6 @@
 {application, robo_grisp, [
     {description, "A GRiSP application"},
-    {vsn, "0.2.0"},
+    {vsn, "0.1.0"},
     {registered, []},
     {mod, {robo_grisp_app, []}},
     {applications, [

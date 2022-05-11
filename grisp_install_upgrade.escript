@@ -192,6 +192,15 @@ copy_release_tar(TargetNode, Version, RelName) ->
     % write the tarball
     ok = erpc:call(TargetNode, file, write_file, [RemotePath , Data], ?TIMEOUT),
 
+    % INI for grisp
+    IniPath = filename:join([ Cwd, "grisp/grisp2/common/deploy/files/grisp.ini.mustache"]),
+    {ok, IniData} = file:read_file(IniPath),
+    IoList1 = re:replace(IniData, "{{release_name}}", RelNameStr, [global]),
+    IoList2 = re:replace(IoList1, "{{release_version}}", Version, [global]),
+    FinalIni = iolist_to_binary(IoList2),
+    % write the new ini file
+    ok = erpc:call(TargetNode, file, write_file, ["grisp.ini" , FinalIni], ?TIMEOUT),
+
     {ok, filename:join([Version, RelNameStr])}.
 
 %% 1. look for a release package tarball with the provided version in the following order:
