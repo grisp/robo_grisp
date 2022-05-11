@@ -3,7 +3,7 @@
 -behaviour(gen_server).
 
 -export([start_link/0]).
--export([init/1, handle_call/3, handle_cast/2, handle_info/2]).
+-export([init/1, handle_call/3, handle_cast/2, handle_info/2, code_change/3]).
 
 
 
@@ -68,12 +68,11 @@ handle_call( _, _, S) ->
 handle_cast( _, S) ->
     {noreply, S}.
 
-handle_info(wait_for_rviz, #state{tf_static_Pub = TF_static_Pub, static_markers_array = MarkerArray, acc_pub = AccPub} = S) ->
+handle_info(wait_for_rviz, #state{tf_static_Pub = TF_static_Pub, acc_pub = AccPub} = S) ->
     case (ros_publisher:get_subscription_count(TF_static_Pub) >= 1) of
         true ->
             ros_publisher:publish(TF_static_Pub, robo_grisp_rviz2:tf_floor_to_map()),
             ros_publisher:publish(TF_static_Pub, robo_grisp_rviz2:tf_head()),
-
 
             ros_publisher:publish(AccPub, robo_grisp_rviz2:marker_info(acc));
         false ->
@@ -139,6 +138,23 @@ handle_info( update_loop, #state{
 
     erlang:send_after(?PUB_PERIOD, self(), update_loop),
     {noreply, S}.
+
+code_change(_OldVsn, State, _Extra) ->
+    grisp_led:off(1),
+    grisp_led:off(2),
+    LEDs = [1, 2],
+    [grisp_led:flash(L, red, 500) || L <- LEDs],
+    robo_grisp_wheels:rotate(left),
+    timer:sleep(1000),
+    robo_grisp_wheels:rotate(right),
+    timer:sleep(1000),
+    robo_grisp_wheels:stop(),
+    grisp_led:off(2),
+    Random = fun() ->
+        {rand:uniform(2) - 1, rand:uniform(2) -1, rand:uniform(2) - 1}
+    end,
+    grisp_led:pattern(1, [{100, Random}]),
+    {ok, State}.
 
 % Internals -------------------------------------
 
